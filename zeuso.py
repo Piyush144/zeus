@@ -1,6 +1,13 @@
 import tensorflow as tf, sys
 import os,time
 from socket import *
+from random import randint
+import MySQLdb
+conn = MySQLdb.connect(host= "localhost",
+                  user="root",
+                  passwd="",
+                  db="autorefresh")
+x = conn.cursor()
 
 array=[5]
 array.append(sys.argv[1])
@@ -24,6 +31,7 @@ with tf.gfile.FastGFile("retrained_graph.pb", 'rb') as f:
 with tf.Session() as sess:    
  while True:
   try:
+    rnum=randint(0,9)
     image_path = "pic.jpeg"
     start=time.time()
     # Read in the image_data
@@ -51,7 +59,16 @@ with tf.Session() as sess:
         print ("")
         print ("")
         print (time.time()-start)
-        os.system("copy %s %s" % ("pic.jpeg","C:\wamp64\www\IP-"))
+        fianlname="C:\\wamp64\\www\\sql\\images\\"+"pic"*rnum+".jpeg"
+        os.system("copy %s %s" % ("pic.jpeg","C:\\wamp64\\www\\sql\\images\\"))
+        os.rename('C:\\wamp64\\www\sql\\images\\pic.jpeg',fianlname)
+        try:
+            x.execute("""UPDATE autorefresh SET name =%s , address = %s , image_name=%s, prob=%s """,("IP: 121.242.232.134","LOCATION- iitm reseach campus,chennai","images/pic.jpeg",net))
+            conn.commit()
+        except:
+            conn.rollback()
+
+        conn.close()
         os.remove("pic.jpeg")
     os.remove("pic.jpeg")
   except:pass
