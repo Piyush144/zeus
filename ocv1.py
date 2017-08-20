@@ -88,7 +88,7 @@ while True:
 	# if the `q` key is pressed, break from the lop
 	if key == ord("q"):
 		break
- 
+
 # cleanup the camera and close any open windows
 camera.release()
 cv2.destroyAllWindows()
